@@ -2,8 +2,8 @@ const debug = require("debug");
 const chalk = require("chalk");
 
 const errorNotFound = (req, res) => {
-  res.status = 404;
-  res.json = { error: true, message: "Not found" };
+  res.status(404);
+  res.json({ error: true, message: "Not found" });
   debug(chalk.bgRedBright.yellow("Not found"));
 };
 

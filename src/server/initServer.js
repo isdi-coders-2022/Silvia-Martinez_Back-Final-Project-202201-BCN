@@ -1,5 +1,5 @@
 require("dotenv").config();
-const debug = require("debug")("social-network:server");
+const debug = require("debug")("wallaplop:server");
 const chalk = require("chalk");
 
 const initServer = (port, app) =>

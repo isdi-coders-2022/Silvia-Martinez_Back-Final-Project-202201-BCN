@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src",
     "start -dev": "nodemon src -q",
-    "test": "jest --watchAll",
+    "test": "jest",
     "test-coverage": "jest --watchAll --coverage",
     "prepare": "husky install"
   },
@@ -38,5 +38,14 @@
     "husky": "^7.0.0",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js",
+      "!src/index.js",
+      "!src/server/index.js",
+      "!src/server/initServer.js"
+    ]
   }
 }

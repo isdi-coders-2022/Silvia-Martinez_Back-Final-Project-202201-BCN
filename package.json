@@ -46,7 +46,8 @@
       "!src/**/*.test.js",
       "!src/index.js",
       "!src/server/index.js",
-      "!src/server/initServer.js"
+      "!src/server/initServer.js",
+      "!src/db/index.js"
     ]
   }
 }

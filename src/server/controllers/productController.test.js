@@ -29,4 +29,15 @@ describe("Given a getAllProducts controller", () => {
       expect(res.json).toHaveBeenCalledWith({ products });
     });
   });
+  describe("When occurred an error", () => {
+    test("Then it should called method next with an error", async () => {
+      const req = null;
+      const res = null;
+      const next = jest.fn();
+
+      await getAllProducts(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+  });
 });

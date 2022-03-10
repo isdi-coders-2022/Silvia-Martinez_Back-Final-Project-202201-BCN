@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   email: { type: String },
   password: { type: String },
   picture: { type: String },
-  products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+  prodcuts: { type: Schema.Types.ObjectId, ref: "products" },
 });
 
 const User = model("User", UserSchema, "users");

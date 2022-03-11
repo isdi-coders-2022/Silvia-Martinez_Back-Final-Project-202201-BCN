@@ -6,7 +6,7 @@ const ProductSchema = new Schema({
   description: { type: String, required: true },
   category: { type: String, required: true },
   picture: { type: String },
-  user: { type: Schema.Types.ObjectId, ref: "User" },
+  userID: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Product = model("Product", ProductSchema, "products");

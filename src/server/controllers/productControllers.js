@@ -47,4 +47,28 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProducts, getUserProducts, deleteProduct };
+const createProduct = async (req, res, next) => {
+  const newProduct = req.body;
+  const userID = req.userId;
+
+  try {
+    const createdProduct = await Product.create({ ...newProduct, userID });
+    if (createdProduct) {
+      res.status(201).json(createdProduct);
+    } else {
+      const error = new Error("Product not found");
+      error.status = 404;
+      next(error);
+    }
+  } catch (error) {
+    error.status = 400;
+    next(error);
+  }
+};
+
+module.exports = {
+  getAllProducts,
+  getUserProducts,
+  deleteProduct,
+  createProduct,
+};

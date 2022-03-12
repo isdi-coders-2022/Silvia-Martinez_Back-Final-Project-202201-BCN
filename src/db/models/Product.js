@@ -7,6 +7,10 @@ const ProductSchema = new Schema({
   category: { type: String, required: true },
   picture: { type: String },
   userID: { type: Schema.Types.ObjectId, ref: "User" },
+  location: {
+    lat: { type: Number },
+    long: { type: Number },
+  },
 });
 
 const Product = model("Product", ProductSchema, "products");

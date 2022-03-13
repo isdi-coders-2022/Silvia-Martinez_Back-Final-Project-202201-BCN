@@ -16,12 +16,14 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await Product.create({
+    id: "123",
     price: 10,
     title: "Silla",
     description: "Una silla preciosa",
     category: "mueble",
   });
   await Product.create({
+    id: "124",
     price: 11,
     title: "Bici",
     description: "Una bici preciosa",

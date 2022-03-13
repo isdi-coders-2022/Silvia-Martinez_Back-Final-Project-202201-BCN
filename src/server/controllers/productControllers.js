@@ -68,12 +68,31 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   const { idProduct } = req.params;
-  const update = req.body;
+  const reqProduct = req.body;
+  const userID = req.userId;
 
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(idProduct, update);
-    if (updatedProduct) {
-      res.status(200).json(updateProduct);
+    const product = await Product.findById(idProduct);
+
+    if (product) {
+      if (product.userID.toString() === userID) {
+        const updatedProduct = await Product.findByIdAndUpdate(
+          idProduct,
+          reqProduct
+        );
+
+        if (updatedProduct) {
+          res.status(200).json(updatedProduct);
+        } else {
+          const error = new Error("Product not found");
+          error.status = 404;
+          next(error);
+        }
+      } else {
+        const error = new Error("Unauthorized to update this product");
+        error.status = 401;
+        next(error);
+      }
     } else {
       const error = new Error("Product not found");
       error.status = 404;

@@ -128,6 +128,31 @@ describe("Given a deleteProduct controller", () => {
       expect(next).toHaveBeenCalledWith(error);
     });
   });
+  describe("When it receives a request with error", () => {
+    test("Then it should call next with an error and code 500", async () => {
+      const product = {
+        id: "1234",
+        price: 10,
+        title: "Silla",
+        description: "Una silla preciosa",
+        category: "mueble",
+      };
+
+      const req = { params: { idProduct: product.id } };
+
+      const next = jest.fn();
+      const error = new Error("Error");
+      error.status = 500;
+
+      Product.findByIdAndDelete = jest
+        .fn()
+        .mockRejectedValue(new Error("Error"));
+
+      await deleteProduct(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });
 
 describe("Given a create Product controller", () => {
@@ -184,9 +209,35 @@ describe("Given a create Product controller", () => {
       expect(next).toHaveBeenCalledWith(error);
     });
   });
+  describe("When it receives a request with error", () => {
+    test("Then it should call next with an error and code 500", async () => {
+      const req = {
+        body: {
+          id: "1234",
+          price: 10,
+          title: "Silla",
+          description: "Una silla preciosa",
+          category: "mueble",
+        },
+      };
+
+      const next = jest.fn();
+      const error = new Error("Error");
+      error.status = 500;
+
+      Product.create = jest.fn().mockRejectedValue(new Error("Error"));
+
+      await createProduct(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });
 
 describe("Given a updateProdcuct controller", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
   describe("When it receives a request with a updated data ", () => {
     test("Then it should call method status and json and next of res with 200", async () => {
       const mockStatus = jest.fn().mockReturnThis();
@@ -228,6 +279,41 @@ describe("Given a updateProdcuct controller", () => {
       expect(mockJson).toHaveBeenCalled();
     });
   });
+  describe("When it receives a request with a updated data but not authorized user ", () => {
+    test("Then it should call method call next with an error and code 401", async () => {
+      const product = {
+        _id: "1234",
+        price: 10,
+        title: "Silla",
+        description: "Una silla preciosa",
+        picture: "unafoto.jpg",
+        category: "mueble",
+        userID: "34",
+        location: { lat: 41.38879, long: 2.15899 },
+      };
+
+      const req = {
+        params: { idProduct: product.id },
+        body: product,
+        userId: "38",
+      };
+
+      const next = jest.fn();
+      const error = new Error("Unauthorized to update this product");
+      error.status = 401;
+
+      Product.findById = jest
+        .fn()
+        .mockResolvedValue({ title: "silla antigua", userID: "34" });
+
+      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
+
+      await updateProduct(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
   describe("When it receives a request with no valid id", () => {
     test("Then it should call next with an error and code 404", async () => {
       const product = {
@@ -244,6 +330,28 @@ describe("Given a updateProdcuct controller", () => {
       error.status = 404;
 
       Product.findById = jest.fn().mockResolvedValue(null);
+
+      await updateProduct(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+  describe("When it receives a request with error", () => {
+    test("Then it should call next with an error and code 500", async () => {
+      const product = {
+        id: "--novalid",
+        price: 10,
+        title: "Silla",
+        description: "Una silla preciosa",
+        category: "mueble",
+      };
+
+      const req = { params: { idProduct: product.id } };
+      const next = jest.fn();
+      const error = new Error("Error");
+      error.status = 500;
+
+      Product.findById = jest.fn().mockRejectedValue(new Error("Error"));
 
       await updateProduct(req, null, next);
 

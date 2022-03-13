@@ -80,14 +80,7 @@ const updateProduct = async (req, res, next) => {
           idProduct,
           reqProduct
         );
-
-        if (updatedProduct) {
-          res.status(200).json(updatedProduct);
-        } else {
-          const error = new Error("Product not found");
-          error.status = 404;
-          next(error);
-        }
+        res.status(200).json(updatedProduct);
       } else {
         const error = new Error("Unauthorized to update this product");
         error.status = 401;

@@ -198,18 +198,29 @@ describe("Given a updateProdcuct controller", () => {
       };
 
       const product = {
-        id: "1234",
+        _id: "1234",
         price: 10,
         title: "Silla",
         description: "Una silla preciosa",
+        picture: "unafoto.jpg",
         category: "mueble",
+        userID: "34",
+        location: { lat: 41.38879, long: 2.15899 },
       };
 
-      const req = { params: { idProduct: product.id } };
+      const req = {
+        params: { idProduct: product.id },
+        body: product,
+        userId: "34",
+      };
 
       const next = null;
 
-      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(req);
+      Product.findById = jest
+        .fn()
+        .mockResolvedValue({ title: "silla antigua", userID: "34" });
+
+      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(product);
 
       await updateProduct(req, res, next);
 
@@ -218,7 +229,7 @@ describe("Given a updateProdcuct controller", () => {
     });
   });
   describe("When it receives a request with no valid id", () => {
-    test("Then it should call nex with an error and code 404", async () => {
+    test("Then it should call next with an error and code 404", async () => {
       const product = {
         id: "--novalid",
         price: 10,
@@ -232,7 +243,8 @@ describe("Given a updateProdcuct controller", () => {
       const error = new Error("Product not found");
       error.status = 404;
 
-      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
+      Product.findById = jest.fn().mockResolvedValue(null);
+
       await updateProduct(req, null, next);
 
       expect(next).toHaveBeenCalledWith(error);

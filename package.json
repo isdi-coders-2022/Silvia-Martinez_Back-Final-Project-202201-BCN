@@ -50,7 +50,9 @@
       "!src/index.js",
       "!src/server/index.js",
       "!src/server/initServer.js",
-      "!src/db/index.js"
+      "!src/db/index.js",
+      "!src/db/models/User.js",
+      "!src/server/middlewares/auth.js"
     ]
   }
 }

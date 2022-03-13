@@ -4,6 +4,7 @@ const {
   getUserProducts,
   deleteProduct,
   createProduct,
+  updateProduct,
 } = require("./productControllers");
 
 jest.mock("../../db/models/Product");
@@ -115,7 +116,7 @@ describe("Given a deleteProduct controller", () => {
         category: "mueble",
       };
 
-      const req = { params: { id: product.id } };
+      const req = { params: { idProduct: product.id } };
 
       const next = jest.fn();
       const error = new Error("Product not found");
@@ -179,6 +180,60 @@ describe("Given a create Product controller", () => {
 
       Product.create = jest.fn().mockResolvedValue(null);
       await createProduct(req, null, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a updateProdcuct controller", () => {
+  describe("When it receives a request with a updated data ", () => {
+    test("Then it should call method status and json and next of res with 200", async () => {
+      const mockStatus = jest.fn().mockReturnThis();
+      const mockJson = jest.fn();
+      const expectedStatus = 200;
+      const res = {
+        status: mockStatus,
+        json: mockJson,
+      };
+
+      const product = {
+        id: "1234",
+        price: 10,
+        title: "Silla",
+        description: "Una silla preciosa",
+        category: "mueble",
+      };
+
+      const req = { params: { idProduct: product.id } };
+
+      const next = null;
+
+      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(req);
+
+      await updateProduct(req, res, next);
+
+      expect(mockStatus).toHaveBeenCalledWith(expectedStatus);
+      expect(mockJson).toHaveBeenCalled();
+    });
+  });
+  describe("When it receives a request with no valid id", () => {
+    test("Then it should call nex with an error and code 404", async () => {
+      const product = {
+        id: "--novalid",
+        price: 10,
+        title: "Silla",
+        description: "Una silla preciosa",
+        category: "mueble",
+      };
+
+      const req = { params: { idProduct: product.id } };
+      const next = jest.fn();
+      const error = new Error("Product not found");
+      error.status = 404;
+
+      Product.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
+      await updateProduct(req, null, next);
 
       expect(next).toHaveBeenCalledWith(error);
     });

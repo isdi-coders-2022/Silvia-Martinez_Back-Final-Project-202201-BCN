@@ -6,8 +6,10 @@ const {
   createProduct,
   updateProduct,
 } = require("./productControllers");
+const uploadPicture = require("../../utils/uploadPicture");
 
 jest.mock("../../db/models/Product");
+jest.mock("../../utils/uploadPicture");
 
 describe("Given a getAllProducts controller", () => {
   beforeEach(() => {
@@ -179,6 +181,9 @@ describe("Given a create Product controller", () => {
         },
       };
 
+      const url = "unaurl.com";
+
+      uploadPicture.mockResolvedValue(url);
       Product.create = jest.fn().mockResolvedValue(req);
 
       await createProduct(req, res, next);

@@ -1,6 +1,7 @@
 const debug = require("debug")("wallaplop:controllers:");
 const chalk = require("chalk");
 const Product = require("../../db/models/Product");
+const uploadPicture = require("../../utils/uploadPicture");
 
 const getAllProducts = async (req, res, next) => {
   try {
@@ -54,6 +55,15 @@ const createProduct = async (req, res, next) => {
   try {
     const createdProduct = await Product.create({ ...newProduct, userID });
     if (createdProduct) {
+      const url = await uploadPicture(
+        req,
+        "products-pictures",
+        createdProduct.id
+      );
+
+      await Product.findByIdAndUpdate(createdProduct.id, {
+        picture: url,
+      });
       res.status(201).json(createdProduct);
     } else {
       const error = new Error("Product not found");
@@ -61,7 +71,7 @@ const createProduct = async (req, res, next) => {
       next(error);
     }
   } catch (error) {
-    error.status = 400;
+    error.status = 500;
     next(error);
   }
 };

@@ -19,9 +19,7 @@ const uploadPicture = async (req, picturePath, pictureName) => {
   };
 
   await uploadBytes(pictureRef, file, metadata);
-  const url = await getDownloadURL(pictureRef);
-
-  return url;
+  return getDownloadURL(pictureRef);
 };
 
 module.exports = uploadPicture;

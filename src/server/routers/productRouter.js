@@ -4,9 +4,6 @@ const multer = require("multer");
 
 const upload = multer({
   dest: "uploads",
-  limits: {
-    fileSize: 5000000,
-  },
 });
 
 const {
@@ -20,14 +17,24 @@ const auth = require("../middlewares/auth");
 
 const router = express();
 
-const ProductSchema = {
+const CreateProductSchema = {
   body: Joi.object({
-    title: Joi.string(),
-    price: Joi.number().required(),
+    title: Joi.string().required(),
+    price: Joi.string().required(),
     description: Joi.string().required(),
     category: Joi.string().required(),
+    lat: Joi.number(),
+    long: Joi.number(),
+  }),
+};
 
-    userID: Joi.string(),
+const UpdateProductSchema = {
+  body: Joi.object({
+    title: Joi.string().required(),
+    price: Joi.string().required(),
+    description: Joi.string().required(),
+    category: Joi.string().required(),
+    userID: Joi.string().forbidden(),
     location: Joi.object({
       lat: Joi.number(),
       long: Joi.number(),
@@ -38,7 +45,13 @@ const ProductSchema = {
 router.get("/list", getAllProducts);
 router.get("/user", auth, getUserProducts);
 router.delete("/:idProduct", auth, deleteProduct);
-router.post("/create", auth, upload.single("picture"), createProduct);
-router.put("/:idProduct", auth, validate(ProductSchema), updateProduct);
+router.post(
+  "/create",
+  auth,
+  upload.single("picture"),
+  validate(CreateProductSchema),
+  createProduct
+);
+router.put("/:idProduct", auth, validate(UpdateProductSchema), updateProduct);
 
 module.exports = router;

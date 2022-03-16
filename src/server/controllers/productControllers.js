@@ -19,6 +19,7 @@ const getUserProducts = async (req, res, next) => {
     const products = await Product.find({
       userID: req.userId,
     });
+
     res.status(200).json({ products });
   } catch (error) {
     debug(chalk.red("Error"));
@@ -66,10 +67,15 @@ const createProduct = async (req, res, next) => {
         createdProduct.id
       );
 
-      await Product.findByIdAndUpdate(createdProduct.id, {
-        picture: url,
-      });
-      res.status(201).json(createdProduct);
+      const productWithImage = await Product.findByIdAndUpdate(
+        createdProduct.id,
+        {
+          picture: url,
+        },
+        { new: true }
+      );
+
+      res.status(201).json(productWithImage);
     } else {
       const error = new Error("Product not found");
       error.status = 404;

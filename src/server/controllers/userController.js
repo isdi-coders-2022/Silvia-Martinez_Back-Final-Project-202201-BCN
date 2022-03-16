@@ -1,6 +1,7 @@
 const debug = require("debug")("wallaplop: user: controller:");
 const chalk = require("chalk");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../../db/models/User");
 const uploadPicture = require("../../utils/uploadPicture");
 
@@ -38,4 +39,29 @@ const userRegister = async (req, res, next) => {
   }
 };
 
-module.exports = userRegister;
+const userLogin = async (req, res, next) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    const error = new Error("Incorrect password or username");
+    error.status = 401;
+    next(error);
+  }
+  const isRightPassword = await bcrypt.compare(password, user.password);
+  if (!isRightPassword) {
+    const error = new Error("Incorrect password or username");
+    error.status = 401;
+    next(error);
+  }
+  const userData = {
+    user: user.name,
+    id: user.id,
+  };
+  const token = jwt.sign(userData, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+  res.json({ token });
+};
+
+module.exports = { userRegister, userLogin };

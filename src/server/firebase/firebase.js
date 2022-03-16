@@ -7,7 +7,7 @@ const { getStorage } = require("firebase/storage");
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAEqJcuWmUAQVt18vvgN9JTdaf_wElsd8I",
+  apiKey: process.env.API_KEY,
   authDomain: "wallaplop.firebaseapp.com",
   projectId: "wallaplop",
   storageBucket: "wallaplop.appspot.com",

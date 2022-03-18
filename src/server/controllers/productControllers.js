@@ -14,6 +14,17 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
+const getProduct = async (req, res, next) => {
+  const { idProduct } = req.params;
+  try {
+    const product = await Product.findById(idProduct).populate("userID");
+    res.status(200).json(product);
+  } catch (error) {
+    error.status = 400;
+    next(error);
+  }
+};
+
 const getUserProducts = async (req, res, next) => {
   try {
     const products = await Product.find({
@@ -125,4 +136,5 @@ module.exports = {
   deleteProduct,
   createProduct,
   updateProduct,
+  getProduct,
 };

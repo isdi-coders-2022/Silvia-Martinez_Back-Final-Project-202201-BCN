@@ -12,6 +12,7 @@ const {
   deleteProduct,
   createProduct,
   updateProduct,
+  getProduct,
 } = require("../controllers/productControllers");
 const auth = require("../middlewares/auth");
 
@@ -44,6 +45,7 @@ const UpdateProductSchema = {
 
 router.get("/list", getAllProducts);
 router.get("/user", auth, getUserProducts);
+router.get("/:idProduct", getProduct);
 router.delete("/:idProduct", auth, deleteProduct);
 router.post(
   "/create",

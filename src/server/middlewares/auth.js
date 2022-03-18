@@ -1,7 +1,24 @@
+const jwt = require("jsonwebtoken");
+
 const auth = (req, res, next) => {
-  const id = "6229e96755f8ba1575827e9d";
-  req.userId = id;
-  next();
+  const headerAuthorization = req.header("Authorization");
+  if (!headerAuthorization) {
+    const error = new Error("Token missing");
+    error.code = 401;
+    next(error);
+  } else {
+    const token = headerAuthorization.replace("Bearer ", "");
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+      const decodedToken = jwt.decode(token);
+      req.userId = decodedToken.id;
+      next();
+    } catch {
+      const error = new Error("Wrong token");
+      error.code = 401;
+      next(error);
+    }
+  }
 };
 
 module.exports = auth;

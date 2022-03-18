@@ -64,4 +64,17 @@ const userLogin = async (req, res, next) => {
   res.json({ token });
 };
 
-module.exports = { userRegister, userLogin };
+const userLoad = async (req, res, next) => {
+  try {
+    const user = await User.findById({
+      _id: req.userId,
+    });
+    res.status(200).json(user);
+  } catch (error) {
+    debug(chalk.red("Error"));
+    error.status = 400;
+    next(error);
+  }
+};
+
+module.exports = { userRegister, userLogin, userLoad };

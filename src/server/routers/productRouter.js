@@ -24,8 +24,7 @@ const CreateProductSchema = {
     price: Joi.string().required(),
     description: Joi.string().required(),
     category: Joi.string().required(),
-    lat: Joi.number(),
-    long: Joi.number(),
+    adress: Joi.string(),
   }),
 };
 

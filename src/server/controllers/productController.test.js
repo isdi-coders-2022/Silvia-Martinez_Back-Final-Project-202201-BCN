@@ -6,6 +6,7 @@ const {
   createProduct,
   updateProduct,
 } = require("./productControllers");
+
 const uploadPicture = require("../../utils/uploadPicture");
 
 jest.mock("../../db/models/Product");
@@ -261,7 +262,7 @@ describe("Given a updateProdcuct controller", () => {
         picture: "unafoto.jpg",
         category: "mueble",
         userID: "34",
-        location: { lat: 41.38879, long: 2.15899 },
+        adress: "diputacio, 37, barcelona",
       };
 
       const req = {
@@ -294,7 +295,7 @@ describe("Given a updateProdcuct controller", () => {
         picture: "unafoto.jpg",
         category: "mueble",
         userID: "34",
-        location: { lat: 41.38879, long: 2.15899 },
+        adress: "diputacio, 37, barcelona",
       };
 
       const req = {

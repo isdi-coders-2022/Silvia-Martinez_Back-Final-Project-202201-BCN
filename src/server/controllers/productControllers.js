@@ -63,13 +63,11 @@ const deleteProduct = async (req, res, next) => {
 const createProduct = async (req, res, next) => {
   const newProduct = req.body;
   const userID = req.userId;
-  const { lat, long } = req.body;
 
   try {
     const createdProduct = await Product.create({
       ...newProduct,
       userID,
-      location: { lat, long },
     });
     if (createdProduct) {
       const url = await uploadPicture(

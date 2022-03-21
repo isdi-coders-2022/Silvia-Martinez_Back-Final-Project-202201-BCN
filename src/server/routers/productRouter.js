@@ -36,10 +36,7 @@ const UpdateProductSchema = {
     description: Joi.string().required(),
     category: Joi.string().required(),
     userID: Joi.string().forbidden(),
-    location: Joi.object({
-      lat: Joi.number(),
-      long: Joi.number(),
-    }),
+    adress: Joi.string(),
   }),
 };
 

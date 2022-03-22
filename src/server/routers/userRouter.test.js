@@ -1,4 +1,3 @@
-require("dotenv").config();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { default: mongoose } = require("mongoose");
 const request = require("supertest");
@@ -8,7 +7,6 @@ const User = require("../../db/models/User");
 const connectDataBase = require("../../db");
 
 let server;
-
 beforeAll(async () => {
   server = await MongoMemoryServer.create();
   const connectionString = server.getUri();

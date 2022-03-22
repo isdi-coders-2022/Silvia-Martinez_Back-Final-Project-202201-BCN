@@ -2,10 +2,11 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { default: mongoose } = require("mongoose");
+const jwt = require("jsonwebtoken");
 const connectDB = require("../../db");
 const User = require("../../db/models/User");
 const uploadPicture = require("../../utils/uploadPicture");
-const { userRegister, userLogin } = require("./userController");
+const { userRegister, userLogin, userLoad } = require("./userController");
 
 jest.mock("../../utils/uploadPicture");
 jest.mock("jsonwebtoken", () => ({
@@ -181,6 +182,63 @@ describe("Given a login controller", () => {
       await userLogin(req, res, next);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+  describe("When it receives request with valid username and password", () => {
+    test("Then it should return a valid token", async () => {
+      const req = {
+        body: { username: "Pepe", password: "1234", name: "Pepe " },
+      };
+      const user = {
+        name: "Pepe",
+        username: "Pepe",
+        password:
+          "$2b$10$vXpv46E7TEgM5sn/gPIb9uU0ITpMYwS07YJO1RZr8J1InWuDnfz0i",
+      };
+
+      User.findOne = jest.fn().mockResolvedValue(user);
+
+      const token = jwt.sign(user, process.env.JWT_SECRET);
+      const res = {
+        json: jest.fn().mockResolvedValue(token),
+      };
+
+      await userLogin(req, res, () => null);
+
+      expect(res.json).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("Given a load User controller", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+  describe("When it receives a response", () => {
+    test("Then it should called method json with status 200", async () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      const req = jest.fn().mockReturnThis();
+      const id = "1234";
+      req.userId = id;
+
+      User.findById = jest.fn().mockResolvedValue({ _id: req.userId });
+
+      await userLoad(req, res);
+
+      expect(User.findById).toHaveBeenCalled();
+    });
+    test("Then it if is an error it should called  status 400", async () => {
+      const res = null;
+      const req = null;
+      const next = jest.fn();
+
+      await userLoad(req, res, next);
+
+      expect(next).toHaveBeenCalled();
     });
   });
 });

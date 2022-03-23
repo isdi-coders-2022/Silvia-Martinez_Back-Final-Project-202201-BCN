@@ -48,14 +48,13 @@ const deleteProduct = async (req, res, next) => {
     if (product) {
       res.json();
     } else {
-      const error = new Error("Product not found");
-      debug(chalk.red(`${error}`));
-      error.status = 404;
+      const error = new Error("Unauthorized to delete this product");
+      error.status = 401;
       next(error);
     }
   } catch (error) {
     debug(chalk.red("Error"));
-    error.status = 400;
+    error.status = 500;
     next(error);
   }
 };
@@ -86,8 +85,8 @@ const createProduct = async (req, res, next) => {
 
       res.status(201).json(productWithImage);
     } else {
-      const error = new Error("Product not found");
-      error.status = 404;
+      const error = new Error("Forbidden");
+      error.status = 403;
       next(error);
     }
   } catch (error) {
@@ -123,7 +122,7 @@ const updateProduct = async (req, res, next) => {
       next(error);
     }
   } catch (error) {
-    error.status = 400;
+    error.status = 500;
     next(error);
   }
 };

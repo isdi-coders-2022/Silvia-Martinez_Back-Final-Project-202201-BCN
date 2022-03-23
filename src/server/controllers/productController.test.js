@@ -5,6 +5,7 @@ const {
   deleteProduct,
   createProduct,
   updateProduct,
+  getProduct,
 } = require("./productControllers");
 
 const uploadPicture = require("../../utils/uploadPicture");
@@ -16,6 +17,7 @@ describe("Given a getAllProducts controller", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
+
   describe("When it receives a response", () => {
     test("Then it should cal method json with a list of products", async () => {
       const res = {
@@ -38,6 +40,7 @@ describe("Given a getAllProducts controller", () => {
       expect(res.json).toHaveBeenCalledWith({ products });
     });
   });
+
   describe("When occurred an error", () => {
     test("Then it should called method next with an error", async () => {
       const req = null;
@@ -50,11 +53,63 @@ describe("Given a getAllProducts controller", () => {
     });
   });
 });
+
+describe("Given getProduct controller", () => {
+  describe("When received a request", () => {
+    test("Then it returns one product", async () => {
+      const productId = "33";
+      const product = {
+        id: productId,
+        title: "title",
+      };
+      const req = {
+        params: {
+          idProduct: productId,
+        },
+      };
+      const status = jest.fn().mockReturnThis();
+
+      const res = {
+        status,
+        json: jest.fn(),
+      };
+
+      Product.findById = jest.fn().mockReturnThis();
+      Product.populate = jest.fn().mockResolvedValue(product);
+
+      await getProduct(req, res);
+
+      expect(res.json).toHaveBeenCalledWith({
+        id: productId,
+        title: "title",
+      });
+      expect(Product.findById).toHaveBeenCalledWith(productId);
+      expect(Product.populate).toHaveBeenCalledWith("userID");
+    });
+  });
+  describe("When occurred an error", () => {
+    test("Then it should called method next with an error", async () => {
+      const res = null;
+
+      const req = {
+        params: {
+          idProduct: null,
+        },
+      };
+      const next = jest.fn();
+
+      await getProduct(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+  });
+});
+
 describe("Given a getUserProducts controller", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  describe("When it receives a response", () => {
+  describe("When it receives a request", () => {
     test("Then it should cal method json with a list of products", async () => {
       const res = {
         status: jest.fn().mockReturnThis(),
@@ -96,6 +151,7 @@ describe("Given a deleteProduct controller", () => {
         title: "Silla",
         description: "Una silla preciosa",
         category: "mueble",
+        userID: "34",
       };
 
       const req = { params: { id: product.id } };
@@ -122,8 +178,8 @@ describe("Given a deleteProduct controller", () => {
       const req = { params: { idProduct: product.id } };
 
       const next = jest.fn();
-      const error = new Error("Product not found");
-      error.status = 404;
+      const error = new Error("Unauthorized to delete this product");
+      error.status = 403;
 
       Product.findByIdAndDelete = jest.fn().mockResolvedValue(null);
       await deleteProduct(req, null, next);
@@ -202,12 +258,13 @@ describe("Given a create Product controller", () => {
           title: "Silla",
           description: "Una silla preciosa",
           category: "mueble",
+          userID: "34",
         },
       };
 
       const next = jest.fn();
-      const error = new Error("Product not found");
-      error.status = 404;
+      const error = new Error("Forbidden");
+      error.status = 403;
 
       Product.create = jest.fn().mockResolvedValue(null);
       await createProduct(req, null, next);
